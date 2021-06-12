@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_expense_app/commons/models/Transaction.dart';
+import 'package:personal_expense_app/providers/TransactionNotifier.dart';
 import 'package:personal_expense_app/widgets/CharBarProgress.dart';
 import 'package:personal_expense_app/widgets/MyCard.dart';
+import 'package:provider/provider.dart';
 
 class ChartBar {
   String label;
@@ -13,29 +15,6 @@ class ChartBar {
 }
 
 class Chart extends StatelessWidget {
-  final List<Transaction> txList;
-  Chart({@required this.txList});
-
-  double get totalLastWeekMoney {
-    return txList.fold(
-        0, (previousValue, element) => previousValue + element.ammount);
-  }
-
-  List<ChartBar> get chartBarList {
-    List<ChartBar> chartBarList = List.generate(7, (index) {
-      DateTime contextDate = DateTime.now().subtract(Duration(days: index));
-      String label = DateFormat('E').format(contextDate).substring(0, 1);
-      double money = txList.fold(0, (previousValue, element) {
-        return previousValue +=
-            element.date.day == contextDate.day ? element.ammount : 0;
-      });
-      double percentOfTotal =
-          totalLastWeekMoney > 0 ? money / totalLastWeekMoney : 0;
-      return ChartBar(label: label, money: money, percent: percentOfTotal);
-    }).toList();
-    return chartBarList;
-  }
-
   @override
   Widget build(BuildContext context) {
     return MyCard(
@@ -44,7 +23,9 @@ class Chart extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: chartBarList
+          children: context
+              .watch<TransactionNotifier>()
+              .chartBarList
               .map((item) {
                 return Expanded(
                   child: Column(

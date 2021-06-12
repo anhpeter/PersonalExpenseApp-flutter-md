@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:personal_expense_app/commons/models/Transaction.dart';
+import 'package:personal_expense_app/providers/TransactionNotifier.dart';
 import 'package:personal_expense_app/widgets/MyCard.dart';
 import 'package:personal_expense_app/widgets/TransactionExcerpt.dart';
+import 'package:provider/provider.dart';
 
 class TransactionList extends StatelessWidget {
-  final List<Transaction> txList;
-  final Function removeHandler;
-
-  TransactionList({this.txList, this.removeHandler});
-
   @override
   Widget build(BuildContext context) {
-    print('buid() List');
+    List<Transaction> txList = context.watch<TransactionNotifier>().txtList;
     return txList.length > 0
         ? Expanded(
             child: Scrollbar(
@@ -21,7 +18,6 @@ class TransactionList extends StatelessWidget {
                 itemBuilder: (BuildContext context, int index) {
                   return TransactionExcerpt(
                     tx: txList[index],
-                    removeHandler: removeHandler,
                   );
                 },
               ),
@@ -39,7 +35,6 @@ class TransactionList extends StatelessWidget {
                 ),
                 Builder(
                   builder: (context) {
-                    print(MediaQuery.of(context).orientation);
                     return Container();
                   },
                 )

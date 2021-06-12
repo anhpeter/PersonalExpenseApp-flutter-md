@@ -1,25 +1,29 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:personal_expense_app/commons/models/Transaction.dart';
+import 'package:personal_expense_app/providers/TransactionNotifier.dart';
 import 'package:personal_expense_app/widgets/MyCard.dart';
+import 'package:provider/provider.dart';
 
 class TransactionExcerpt extends StatelessWidget {
   final Transaction tx;
-  final Function removeHandler;
 
-  TransactionExcerpt({@required this.tx, this.removeHandler});
+  TransactionExcerpt({@required this.tx});
 
   @override
   Widget build(BuildContext context) {
+    print("Transaction build");
     return MyCard(
       padding: EdgeInsets.all(0),
       child: ListTile(
         onTap: () {},
         dense: false,
         trailing: IconButton(
-            color: Colors.red,
-            icon: Icon(Icons.delete),
-            onPressed: () => removeHandler(tx.id)),
+          color: Colors.red,
+          icon: Icon(Icons.delete),
+          onPressed: () =>
+              context.read<TransactionNotifier>().removeTransaction(tx.id),
+        ),
         leading: CircleAvatar(
           backgroundColor: Theme.of(context).primaryColor,
           child: FittedBox(

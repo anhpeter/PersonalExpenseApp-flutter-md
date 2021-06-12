@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:personal_expense_app/providers/TransactionNotifier.dart';
 import 'package:personal_expense_app/widgets/MyAlertDialog.dart';
 import 'package:personal_expense_app/widgets/MyCard.dart';
+import 'package:provider/provider.dart';
 
 class AddNewTransaction extends StatefulWidget {
-  final Function addNewTransactionHandler;
-
-  AddNewTransaction({@required this.addNewTransactionHandler});
+  AddNewTransaction();
 
   @override
   _AddNewTransactionState createState() => _AddNewTransactionState();
@@ -17,7 +17,6 @@ class _AddNewTransactionState extends State<AddNewTransaction> {
   final _nameController = new TextEditingController();
   final _ammountController = new TextEditingController();
   DateTime _pickedDate = DateTime.now();
-
 
   void initState() {
     _nameController.addListener(() {
@@ -35,8 +34,11 @@ class _AddNewTransactionState extends State<AddNewTransaction> {
   }
 
   void onSubmitHandler() {
-    widget.addNewTransactionHandler(_nameController.text,
-        double.parse(_ammountController.text), _pickedDate);
+    context.read<TransactionNotifier>().addNewTransactionHandler(
+        _nameController.text,
+        double.parse(_ammountController.text),
+        _pickedDate);
+
     _nameController.clear();
     _ammountController.clear();
     _pickedDate = DateTime.now();

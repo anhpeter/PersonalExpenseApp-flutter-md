@@ -1,55 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:personal_expense_app/commons/dummy/DummyTransactionList.dart';
 import 'package:personal_expense_app/commons/models/Transaction.dart';
+import 'package:personal_expense_app/providers/TransactionNotifier.dart';
 import 'package:personal_expense_app/widgets/AddNewTransaction.dart';
 import 'package:personal_expense_app/widgets/Chart.dart';
 import 'package:personal_expense_app/widgets/TransactionLIst.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    MultiProvider(
+      providers: [ChangeNotifierProvider(create: (_) => TransactionNotifier())],
+      child: MyApp(),
+    ),
+  );
 }
 
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  List<Transaction> _txList = dummyTransactionList;
-  List<Transaction> get _transactionListForChart {
-    return _txList
-        .where((element) =>
-            element.date.isAfter(DateTime.now().subtract(Duration(days: 7))))
-        .toList();
-  }
-
-  void _addNewTransactionHandler(String name, double ammount, DateTime date) {
-    Transaction newTx = Transaction(name: name, ammount: ammount, date: date);
-    setState(() {
-      _txList.add(newTx);
-    });
-  }
-
-  void _removeTransaction(int txId) {
-    setState(() {
-      _txList.removeWhere((element) => element.id == txId);
-    });
-  }
-
+class MyApp extends StatelessWidget {
   void _startNewTransaction(BuildContext context) {
     showModalBottomSheet(
         isScrollControlled: true,
         context: context,
         builder: (_) {
           return SingleChildScrollView(
-            child: AddNewTransaction(
-                addNewTransactionHandler: _addNewTransactionHandler),
+            child: AddNewTransaction(),
           );
         });
   }
 
   @override
   Widget build(BuildContext context) {
+    print("app build");
     return MaterialApp(
       title: "Personal Expense",
       theme: ThemeData(
@@ -94,13 +74,8 @@ class _MyAppState extends State<MyApp> {
           padding: EdgeInsets.all(10),
           child: Column(
             children: [
-              Chart(
-                txList: _transactionListForChart,
-              ),
-              TransactionList(
-                removeHandler: _removeTransaction,
-                txList: _txList,
-              ),
+              Chart(),
+              TransactionList(),
             ],
           ),
         ),
